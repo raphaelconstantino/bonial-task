@@ -1,4 +1,4 @@
-import {ConnectionFactory} from './ConnectionFactory';
+import {ConnectionFactory} from '../support/db/ConnectionFactory';
 import {OfferDAO} from '../dao/OfferDAO';
 
 export class OfferService {
