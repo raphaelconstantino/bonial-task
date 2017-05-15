@@ -1,18 +1,18 @@
 export class Offer {
     
-    constructor(name, category, description, productName, retailerUrl, productBrand, reducedPrice, originalPrice, productImagePointer, createdAt) {
-        
+    constructor(obj = {}) {
+
         this._key                   = null;
-        this.name                   = name || "";
-        this.category               = category || "";
-        this.description            = description || "";
-        this.productName            = productName || "";
-        this.retailerUrl            = retailerUrl || "";
-        this.productBrand           = productBrand || "";
-        this.reducedPrice           = reducedPrice || { amount : 0, currencyCode : "" };
-        this.originalPrice          = originalPrice || {amount : 0, currencyCode : "" };
-        this.productImagePointer    = productImagePointer || "";
-        this.createdAt              = createdAt || null;
+        this.name                   = obj.name || "";
+        this.category               = obj.category || "";
+        this.description            = obj.description || "";
+        this.productName            = obj.productName || "";
+        this.retailerUrl            = obj.retailerUrl || "";
+        this.productBrand           = obj.productBrand || "";
+        this.reducedPrice           = obj.reducedPrice || { amount : 0, currencyCode : "" };
+        this.originalPrice          = obj.originalPrice || {amount : 0, currencyCode : "" };
+        this.productImagePointer    = obj.productImagePointer || "";
+        this.createdAt              = obj.createdAt || null;
 
 
     }

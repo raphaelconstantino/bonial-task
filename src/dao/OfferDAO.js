@@ -1,4 +1,5 @@
 import {Offer} from '../models/Offer';
+import {OfferList} from '../models/OfferList';
 
 export class OfferDAO {
 
@@ -40,7 +41,7 @@ export class OfferDAO {
                 .objectStore(this._store)
                 .openCursor();
 
-            let offers = [];
+            let offerList = new OfferList();
 
             cursor.onsuccess = e => {
 
@@ -49,15 +50,15 @@ export class OfferDAO {
                 if(current) {
 
                     let data = current.value;
-                    let offer = new Offer(data.name, data.category, data.description, data.productName, data.retailerUrl, data.productBrand, data.reducedPrice, data.originalPrice, data.productImagePointer, data.createdAt);
+                    let offer = new Offer(data);
                     offer.key = current.key;
-                    offers.push(offer);
+                    offerList.offers.push(offer);
 
                     current.continue();
 
                 } else {
 
-                    resolve(offers);
+                    resolve(offerList);
                 }
 
             };
@@ -84,7 +85,7 @@ export class OfferDAO {
 
                 let offer = {};
                 let data = e.target.result;
-                offer = new Offer(data.name, data.category, data.description, data.productName, data.retailerUrl, data.productBrand, data.reducedPrice, data.originalPrice, data.productImagePointer, data.createdAt);
+                offer = new Offer(data);
                 offer.key = id;
 
                 resolve(offer);

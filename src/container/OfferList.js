@@ -13,7 +13,7 @@ class OfferList extends Component {
 
     componentDidMount() {
         OfferService.fetch()
-            .then(offers => this.setState({offers}));
+            .then(offerList => this.setState({offers : offerList.offers}));
     }
 
     deleteOffer (id, e) {
@@ -21,7 +21,7 @@ class OfferList extends Component {
         OfferService.delete(id)
             .then(() => {
                 OfferService.fetch()
-                    .then(offers => this.setState({offers}));    
+                    .then(offerList => this.setState({offers : offerList.offers}));    
             });
     }         
 
