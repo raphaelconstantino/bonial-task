@@ -12,6 +12,7 @@ const fieldValidations = [
     ValidationRuleExecutor.ruleRunner("name", "Name", ValidationRules.required),
     ValidationRuleExecutor.ruleRunner("productName", "Product Name", ValidationRules.required),
     ValidationRuleExecutor.ruleRunner("retailerUrl", "Retailer Url", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("productBrand", "Product Brand", ValidationRules.required),
 ];
 
 class Upsert extends Component {
@@ -134,9 +135,7 @@ class Upsert extends Component {
 
                     <FormText label="Retailer Url" val={this.state.offer.retailerUrl} change={this.setField.bind(this, "retailerUrl")} showError={this.state.showErrors} errorText={this.state.validationErrors["retailerUrl"]}/>
 
-                    <FormRow label="Product Brand">
-                        <input className="form-control" type="text" placeholder="Product Brand" value={this.state.offer.productBrand} onChange={this.setField.bind(this, "productBrand")}/>
-                    </FormRow>                                                             
+                    <FormText label="Product Brand" val={this.state.offer.productBrand} change={this.setField.bind(this, "productBrand")} showError={this.state.showErrors} errorText={this.state.validationErrors["productBrand"]}/>                                                
   
                     <FormRow label="Reduced Price">
                         <input className="form-control" type="number" placeholder="Reduced Price" value={this.state.offer.reducedPrice.amount} onChange={this.setFieldObj.bind(this, "reducedPrice", "amount")}/>
