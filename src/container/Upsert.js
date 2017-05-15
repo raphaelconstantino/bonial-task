@@ -5,16 +5,15 @@ import {Offer} from '../models/Offer';
 import {OfferService} from '../services/OfferService';
 import FormRow from '../components/FormRow';
 import FormText from '../components/FormText';
-import {run, ruleRunner} from '../util/validationRuleRunner';
-import {required} from '../util/rules';
+import ValidationRuleExecutor from '../util/ValidationRuleExecutor';
+import ValidationRules from '../util/ValidationRules';
 
 const fieldValidations = [ 
-  ruleRunner("name", "Name", required),
-  ruleRunner("productName", "Product Name", required),
+  ValidationRuleExecutor.ruleRunner("name", "Name", ValidationRules.required),
+  ValidationRuleExecutor.ruleRunner("productName", "Product Name", ValidationRules.required),
 ];
 
 class Upsert extends Component {
-  
 
 	constructor () {
 		super();
@@ -31,7 +30,7 @@ class Upsert extends Component {
 
     componentDidMount() {
         
-        this.setState({validationErrors : run(this.state, fieldValidations)});
+        this.setState({validationErrors : ValidationRuleExecutor.run(this.state, fieldValidations)});
         
         // Fill fields to update
         if (this.props.match.params.offerKey) {
@@ -44,7 +43,7 @@ class Upsert extends Component {
     {
         let offer = this.state.offer;
         offer[fieldName] = e.target.value;
-        this.setState({validationErrors : run(offer, fieldValidations)});
+        this.setState({validationErrors : ValidationRuleExecutor.run(offer, fieldValidations)});
         this.setState({offer});
     }   	
 
