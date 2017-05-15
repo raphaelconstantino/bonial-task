@@ -1,6 +1,6 @@
 # Bonial Task Code
 
-Boniadl task code with Frontend based on create-react-app
+Bonial task code with Frontend based on create-react-app
 
 Install:
 
