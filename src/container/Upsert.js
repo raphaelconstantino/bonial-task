@@ -11,6 +11,7 @@ import ValidationRules from '../support/validation/ValidationRules';
 const fieldValidations = [ 
     ValidationRuleExecutor.ruleRunner("name", "Name", ValidationRules.required),
     ValidationRuleExecutor.ruleRunner("productName", "Product Name", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("retailerUrl", "Retailer Url", ValidationRules.required),
 ];
 
 class Upsert extends Component {
@@ -131,9 +132,7 @@ class Upsert extends Component {
 
                     <FormText label="Product Name" val={this.state.offer.productName} change={this.setField.bind(this, "productName")} showError={this.state.showErrors} errorText={this.state.validationErrors["productName"]}/>
 
-                    <FormRow label="Retailer Url">
-                        <input className="form-control" type="text" placeholder="http://" value={this.state.offer.retailerUrl} onChange={this.setField.bind(this, "retailerUrl")}/>
-                    </FormRow>                               
+                    <FormText label="Retailer Url" val={this.state.offer.retailerUrl} change={this.setField.bind(this, "retailerUrl")} showError={this.state.showErrors} errorText={this.state.validationErrors["retailerUrl"]}/>
 
                     <FormRow label="Product Brand">
                         <input className="form-control" type="text" placeholder="Product Brand" value={this.state.offer.productBrand} onChange={this.setField.bind(this, "productBrand")}/>

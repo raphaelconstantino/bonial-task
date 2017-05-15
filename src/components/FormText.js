@@ -7,15 +7,25 @@ class FormText extends Component {
         {
             return (
                 <div className="validation-error">
-                    <span className="text">{this.props.errorText}</span>
+                    <span className="text-danger">{this.props.errorText}</span>
                 </div>
             );
         }        
     }
 
+    getClasses () {
+        if (this.props.showError && this.props.errorText !== "")
+        {
+            return "form-group row has-error"
+        }
+        
+        return "form-group row";
+
+    }
+
     render () {
         return (
-            <div className="form-group row">
+            <div className={this.getClasses()}>
                 <label  className="col-md-1 col-form-label">{this.props.label}</label>
                 <div className="col-md-5">
                     <input 
