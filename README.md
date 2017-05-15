@@ -1,6 +1,8 @@
 # Bonial Task Code
 
-Bonial task code with Frontend based on create-react-app
+Bonial task code with Frontend based on create-react-app. 
+Based on react and "indexedDB" as storage.
+
 
 Install:
 
