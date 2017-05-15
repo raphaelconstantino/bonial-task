@@ -1,0 +1,30 @@
+body {
+    padding : 1em;
+}
+
+header {
+    padding: 0 1em 0.5em 1em;
+}
+
+#category-container {
+    border-top : 1px solid #999;
+    padding-top : 2em;
+}
+
+.offer-box {
+    margin-bottom : 2em;
+}
+
+.text-strike {
+    text-decoration: line-through;
+}
+
+.new-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #28732a;
+}
+
+.off {
+    color: #a94442;
+}
