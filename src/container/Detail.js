@@ -13,7 +13,8 @@ class Detail extends Component {
     }
 
     componentDidMount() {
-        OfferService.fetchById(this.props.match.params.offerKey).then(offer => this.setState({offer}));
+        OfferService.fetchById(this.props.match.params.offerKey)
+            .then(offer => this.setState({offer}));
     } 
 
     getImg(offer) {

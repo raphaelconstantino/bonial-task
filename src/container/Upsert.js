@@ -18,7 +18,8 @@ class Upsert extends Component {
     componentDidMount() {
         // Fill fields to update
         if (this.props.match.params.offerKey) {
-            OfferService.fetchById(this.props.match.params.offerKey).then(offer => this.setState({offer}));
+            OfferService.fetchById(this.props.match.params.offerKey)
+                .then(offer => this.setState({offer}));
         }
     } 
 
