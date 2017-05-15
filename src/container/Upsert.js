@@ -4,18 +4,35 @@ import ReactFileReader from 'react-file-reader';
 import {Offer} from '../models/Offer';
 import {OfferService} from '../services/OfferService';
 import FormRow from '../components/FormRow';
+import FormText from '../components/FormText';
+import {run, ruleRunner} from '../util/validationRuleRunner';
+import {required} from '../util/rules';
+
+const fieldValidations = [ 
+  ruleRunner("name", "Name", required),
+  ruleRunner("productName", "Product Name", required),
+];
 
 class Upsert extends Component {
   
 
 	constructor () {
 		super();
-        this.state = { offer : new Offer(), redirect : false};
+        this.state = { 
+            offer : new Offer(), 
+            redirect : false,
+            showErrors: false,
+            validationErrors: {}            
+        };
         this.setField = this.setField.bind(this);
         this.setFieldObj = this.setFieldObj.bind(this);
+
     }    
 
     componentDidMount() {
+        
+        this.setState({validationErrors : run(this.state, fieldValidations)});
+        
         // Fill fields to update
         if (this.props.match.params.offerKey) {
             OfferService.fetchById(this.props.match.params.offerKey)
@@ -27,6 +44,7 @@ class Upsert extends Component {
     {
         let offer = this.state.offer;
         offer[fieldName] = e.target.value;
+        this.setState({validationErrors : run(offer, fieldValidations)});
         this.setState({offer});
     }   	
 
@@ -49,7 +67,7 @@ class Upsert extends Component {
         }.bind(this);
 
     }        
-  
+
 	sendData (e) {
         
         e.preventDefault(); 
@@ -57,6 +75,13 @@ class Upsert extends Component {
         var offerKey = this.props.match.params.offerKey;
         var offer = this.state.offer;
         offer.createdAt = new Date();
+
+        this.setState({showErrors: true});
+        
+        if(Object.keys(this.state.validationErrors).length)
+        {
+            return;
+        }
 
         if (offerKey) 
         {
@@ -93,9 +118,7 @@ class Upsert extends Component {
 
                 <form className="form-horizontal" onSubmit={this.sendData.bind(this)}>
 
-                    <FormRow label="Name">
-                        <input className="form-control" type="text" placeholder="Name" value={this.state.offer.name} onChange={this.setField.bind(this, "name")} />
-                    </FormRow>    
+                    <FormText label="Name" val={this.state.offer.name} change={this.setField.bind(this, "name")} showError={this.state.showErrors} errorText={this.state.validationErrors["name"]}/>
 
                     <FormRow label="Category">
                         <select className="form-control" placeholder="Category" value={this.state.offer.category} onChange={this.setField.bind(this, "category")}>
@@ -108,9 +131,7 @@ class Upsert extends Component {
                         <textarea className="form-control" type="text" placeholder="Description" value={this.state.offer.description} onChange={this.setField.bind(this, "description")}></textarea>
                     </FormRow>     
 
-                    <FormRow label="Product Name">
-                        <input className="form-control" type="text" placeholder="Product Name" value={this.state.offer.productName} onChange={this.setField.bind(this, "productName")}/>
-                    </FormRow>
+                    <FormText label="Product Name" val={this.state.offer.productName} change={this.setField.bind(this, "productName")} showError={this.state.showErrors} errorText={this.state.validationErrors["productName"]}/>
 
                     <FormRow label="Retailer Url">
                         <input className="form-control" type="text" placeholder="http://" value={this.state.offer.retailerUrl} onChange={this.setField.bind(this, "retailerUrl")}/>
