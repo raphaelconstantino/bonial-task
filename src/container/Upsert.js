@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router'
-import ReactFileReader from 'react-file-reader';
 import {Offer} from '../models/Offer';
 import {OfferService} from '../services/OfferService';
-import FormRow from '../components/FormRow';
+import FormUpload from '../components/FormUpload';
 import FormText from '../components/FormText';
+import FormTextArea from '../components/FormTextArea';
+import FormSelect from '../components/FormSelect';
 import ValidationRuleExecutor from '../support/validation/ValidationRuleExecutor';
 import ValidationRules from '../support/validation/ValidationRules';
 
 const fieldValidations = [ 
     ValidationRuleExecutor.ruleRunner("name", "Name", ValidationRules.required),
     ValidationRuleExecutor.ruleRunner("productName", "Product Name", ValidationRules.required),
-    ValidationRuleExecutor.ruleRunner("retailerUrl", "Retailer Url", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("retailerUrl", "Retailer Url", ValidationRules.required, ValidationRules.url),
     ValidationRuleExecutor.ruleRunner("productBrand", "Product Brand", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("category", "Category", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("description", "Description", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("originalPrice.amount", "Amount", ValidationRules.required, ValidationRules.positiveNumber),
+    ValidationRuleExecutor.ruleRunner("reducedPrice.amount", "Amount", ValidationRules.required, ValidationRules.positiveNumber),
+    ValidationRuleExecutor.ruleRunner("originalPrice.currencyCode", "Currency", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("reducedPrice.currencyCode", "Currency", ValidationRules.required),
+    ValidationRuleExecutor.ruleRunner("productImagePointer", "Image", ValidationRules.required),
 ];
 
 class Upsert extends Component {
@@ -37,7 +45,7 @@ class Upsert extends Component {
         // Fill fields to update
         if (this.props.match.params.offerKey) {
             OfferService.fetchById(this.props.match.params.offerKey)
-                .then(offer => this.setState({offer}));
+                .then(offer => this.setState({offer, validationErrors : ValidationRuleExecutor.run(offer, fieldValidations)}));
         }
     } 
 
@@ -52,7 +60,7 @@ class Upsert extends Component {
     {
         let offer = this.state.offer;
         offer[fieldObj][fieldName] = e.target.value;
-        this.setState({offer});
+        this.setState({offer, validationErrors : ValidationRuleExecutor.run(offer, fieldValidations)});
     }   	
 
     handleFiles (files) {
@@ -63,7 +71,7 @@ class Upsert extends Component {
 
         reader.onloadend = function () {
             offer.productImagePointer = reader.result;
-            this.setState({offer});
+            this.setState({offer, validationErrors : ValidationRuleExecutor.run(offer, fieldValidations)});
         }.bind(this);
 
     }        
@@ -77,7 +85,8 @@ class Upsert extends Component {
         offer.createdAt = new Date();
 
         this.setState({showErrors: true});
-        
+
+        // Validation
         if(Object.keys(this.state.validationErrors).length)
         {
             return;
@@ -120,16 +129,15 @@ class Upsert extends Component {
 
                     <FormText label="Name" val={this.state.offer.name} change={this.setField.bind(this, "name")} showError={this.state.showErrors} errorText={this.state.validationErrors["name"]}/>
 
-                    <FormRow label="Category">
-                        <select className="form-control" placeholder="Category" value={this.state.offer.category} onChange={this.setField.bind(this, "category")}>
-                            <option></option>
-                            <option value="Computer">Computer</option>
-                        </select> 
-                    </FormRow>                        
+                    <FormSelect 
+                        label="Category" 
+                        val={this.state.offer.category} 
+                        change={this.setField.bind(this, "category")} 
+                        options={[{key : "Computer", val : "Computer"}]} 
+                        showError={this.state.showErrors} 
+                        errorText={this.state.validationErrors["category"]}/>    
 
-                    <FormRow label="Description">
-                        <textarea className="form-control" type="text" placeholder="Description" value={this.state.offer.description} onChange={this.setField.bind(this, "description")}></textarea>
-                    </FormRow>     
+                    <FormTextArea label="Description" val={this.state.offer.description} change={this.setField.bind(this, "description")} showError={this.state.showErrors} errorText={this.state.validationErrors["description"]}/>
 
                     <FormText label="Product Name" val={this.state.offer.productName} change={this.setField.bind(this, "productName")} showError={this.state.showErrors} errorText={this.state.validationErrors["productName"]}/>
 
@@ -137,37 +145,27 @@ class Upsert extends Component {
 
                     <FormText label="Product Brand" val={this.state.offer.productBrand} change={this.setField.bind(this, "productBrand")} showError={this.state.showErrors} errorText={this.state.validationErrors["productBrand"]}/>                                                
   
-                    <FormRow label="Reduced Price">
-                        <input className="form-control" type="number" placeholder="Reduced Price" value={this.state.offer.reducedPrice.amount} onChange={this.setFieldObj.bind(this, "reducedPrice", "amount")}/>
-                    </FormRow>                               
+                    <FormText label="Reduced Price" type="number" val={this.state.offer.reducedPrice.amount} change={this.setFieldObj.bind(this, "reducedPrice", "amount")} showError={this.state.showErrors} errorText={this.state.validationErrors["reducedPrice.amount"]}/>                              
 
-                    <FormRow label="Reduced Currency">
-                        <select className="form-control" placeholder="Currency" value={this.state.offer.reducedPrice.currencyCode} onChange={this.setFieldObj.bind(this, "reducedPrice", "currencyCode")}>
-                            <option></option>
-                            <option value="USD">US Dollar</option>
-                            <option value="GBP">Pound</option>
-                            <option value="EUR">Euro</option>
-                        </select>
-                    </FormRow>                                  
+                    <FormSelect 
+                        label="Reduced Currency" 
+                        val={this.state.offer.reducedPrice.currencyCode} 
+                        change={this.setFieldObj.bind(this, "reducedPrice", "currencyCode")} 
+                        options={[{key : "USD", val : "US Dollar"}, {key : "GBP", val : "Pound"}, {key : "EUR", val : "Euro"}]} 
+                        showError={this.state.showErrors} 
+                        errorText={this.state.validationErrors["reducedPrice.currencyCode"]}/>
 
-                    <FormRow label="Original Price">
-                        <input className="form-control" type="number" placeholder="Original Price" value={this.state.offer.originalPrice.amount} onChange={this.setFieldObj.bind(this, "originalPrice", "amount")}/>
-                    </FormRow> 
+                    <FormText label="Original Price" type="number" val={this.state.offer.originalPrice.amount} change={this.setFieldObj.bind(this, "originalPrice", "amount")} showError={this.state.showErrors} errorText={this.state.validationErrors["originalPrice.amount"]}/>
 
-                    <FormRow label="Original Currency">
-                        <select className="form-control" placeholder="Original Currency" value={this.state.offer.originalPrice.currencyCode} onChange={this.setFieldObj.bind(this, "originalPrice", "currencyCode")}>
-                            <option></option>
-                            <option value="USD">US Dollar</option>
-                            <option value="GBP">Pound</option>
-                            <option value="EUR">Euro</option>
-                        </select>       
-                    </FormRow>                     
+                    <FormSelect 
+                        label="Original Currency" 
+                        val={this.state.offer.originalPrice.currencyCode} 
+                        change={this.setFieldObj.bind(this, "originalPrice", "currencyCode")} 
+                        options={[{key : "USD", val : "US Dollar"}, {key : "GBP", val : "Pound"}, {key : "EUR", val : "Euro"}]} 
+                        showError={this.state.showErrors} 
+                        errorText={this.state.validationErrors["originalPrice.currencyCode"]}/>
 
-                    <FormRow label="Image">
-                        <ReactFileReader handleFiles={this.handleFiles.bind(this)}>
-                            <span className='btn btn-info'>Upload</span>
-                        </ReactFileReader>
-                    </FormRow>                                                                                                                               
+                    <FormUpload label="Image" handleFiles={this.handleFiles.bind(this)} showError={this.state.showErrors} errorText={this.state.validationErrors["productImagePointer"]}/>                                                                                                                          
 
                     <button type="submit" className="btn btn-primary">Submit</button>&nbsp;
                     <button onClick={this.fnCancel.bind(this)} type="submit" className="btn btn-danger">Cancel</button>
